@@ -294,7 +294,7 @@ for epoch=1:Epochs
             
             if TrainFlag
                 
-                if (~Guidance ||  ~~mod(Sample,10)   || epoch>(0.8*Epochs)) && glimpse==(Glimpses-1) % Train regularly
+                if (~Guidance ||  ~~mod(Sample,10)   || epoch>(0.8*Epochs)) && glimpse~=(Glimpses-1) % Train regularly
                     AttentionNoise(:,glimpse,Sample) = net.NoiseStd.*randn(2,1);
                     AttentionOutput = net.Att_Wout*tanh(net.activation(:,glimpse+1,Sample)) +  AttentionNoise(:,glimpse,Sample); % Update output
                 else % Guidance
