@@ -294,13 +294,14 @@ for epoch=1:Epochs
             
             if TrainFlag
                 
-                if (~Guidance ||  ~~mod(Sample,10)   || epoch>(0.8*Epochs)) && glimpse~=(Glimpses-1) % Train regularly
-                    AttentionNoise(:,glimpse,Sample) = net.NoiseStd.*randn(2,1);
-                    AttentionOutput = net.Att_Wout*tanh(net.activation(:,glimpse+1,Sample)) +  AttentionNoise(:,glimpse,Sample); % Update output
-                else % Guidance
+                if Guidance && glimpse==(Glimpses-1) && ~mod(Sample,10) && epoch<(0.8*Epochs) % Guidance
                     AttentionOutput =([x_digit_center;y_digit_center]-CurrentPosition)/locfac; % Demonstrate Attention output
                     AttentionNoise(:,glimpse,Sample) = AttentionOutput -  net.Att_Wout*tanh(net.activation(:,glimpse+1,Sample));
+                else %regular training
+                    AttentionNoise(:,glimpse,Sample) = net.NoiseStd.*randn(2,1);
+                    AttentionOutput = net.Att_Wout*tanh(net.activation(:,glimpse+1,Sample)) +  AttentionNoise(:,glimpse,Sample); % Update output
                 end
+                
                 if VariableGlimpses
                     GoStopNoise(:,glimpse,Sample) = net.NoiseStd.*randn(2,1);
                     GoStopOutput = net.GoStop_Wout*tanh(net.activation(:,glimpse+1,Sample)) +  GoStopNoise(:,glimpse,Sample); % Update output
